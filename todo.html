@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ToDo List</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+		}
+		.todo-item {
+			display: flex;
+			align-items: center;
+			margin: 10px;
+		}
+		.todo-item input[type="checkbox"] {
+			margin-right: 10px;
+		}
+		.todo-item label {
+			flex-grow: 1;
+			cursor: pointer;
+		}
+		.todo-item button {
+			margin-left: 10px;
+			padding: 5px 10px;
+			border: none;
+			border-radius: 5px;
+			background-color: #f44336;
+			color: white;
+			cursor: pointer;
+		}
+	</style>
+</head>
+<body>
+	<h1>ToDo List</h1>
+	<form>
+		<label for="todo">ToDo:</label>
+		<input type="text" id="todo" name="todo">
+		<button type="button" id="addBtn">Add</button>
+	</form>
+	<ul id="todoList">
+	</ul>
+
+	<script>
+		const addBtn = document.querySelector('#addBtn');
+		const todoInput = document.querySelector('#todo');
+		const todoList = document.querySelector('#todoList');
+
+		let todos = [];
+
+		addBtn.addEventListener('click', () => {
+			const todoText = todoInput.value.trim();
+
+			if (todoText.length === 0) {
+				return;
+			}
+
+			const newTodo = {
+				text: todoText,
+				completed: false,
+			};
+
+			todos.push(newTodo);
+
+			renderTodoList();
+
+			todoInput.value = '';
+		});
+
+		function renderTodoList() {
+			todoList.innerHTML = '';
+
+			todos.forEach((todo, index) => {
+				const todoItem = document.createElement('li');
+				todoItem.classList.add('todo-item');
+
+				const todoCheckbox = document.createElement('input');
+				todoCheckbox.type = 'checkbox';
+				todoCheckbox.checked = todo.completed;
+				todoCheckbox.addEventListener('change', () => {
+					todos[index].completed = !todos[index].completed;
+					renderTodoList();
+				});
+
+				const todoLabel = document.createElement('label');
+				todoLabel.textContent = todo.text;
+				todoLabel.addEventListener('click', () => {
+					todoCheckbox.checked = !todoCheckbox.checked;
+					todos[index].completed = !todos[index].completed;
+					renderTodoList();
+				});
+
+				const todoDeleteBtn = document.createElement('button');
+				todoDeleteBtn.textContent = 'Delete';
+				todoDeleteBtn.addEventListener('click', () => {
+					todos.splice(index, 1);
+					renderTodoList();
+				});
+
+				todoItem.appendChild(todoCheckbox);
+				todoItem.appendChild(todoLabel);
+				todoItem.appendChild(todoDeleteBtn);
+
+				todoList.appendChild(todoItem);
+			});
+		}
+	</script>
+</body>
+</html>
